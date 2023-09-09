@@ -194,7 +194,7 @@ contract ReLPContract is AccessControl {
   }
 
   // ================================ RdpxV2Core FUNCTIONS ================================ //
-
+  event reLPEVENT();
   /**
    * @dev   re-LPs the pool
    * @param _amount the amount to reLP
@@ -304,6 +304,7 @@ contract ReLPContract is AccessControl {
       IERC20WithBurn(addresses.tokenA).balanceOf(address(this))
     );
     IRdpxV2Core(addresses.rdpxV2Core).sync();
+    emit reLPEVENT();
   }
 
   // ================================ Events FUNCTIONS ================================ //

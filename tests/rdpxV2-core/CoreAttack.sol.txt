@@ -1,0 +1,92 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.19;
+
+import { Test } from "forge-std/Test.sol";
+import "forge-std/console.sol";
+
+
+import { ERC721Holder } from "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import { Setup } from "./Setup.t.sol";
+import { Periphery } from "./Periphery.t.sol";
+import {MockToken} from "contracts/mocks/MockToken.sol";
+
+
+// Core contracts
+import { RdpxV2Core } from "contracts/core/RdpxV2Core.sol";
+import { PerpetualAtlanticVault } from "contracts/perp-vault/PerpetualAtlanticVault.sol";
+
+// Interfaces
+import { IStableSwap } from "contracts/interfaces/IStableSwap.sol";
+
+contract CoreAttack is ERC721Holder, Setup, Periphery {
+    address user1 = address(1);
+    address user2 = address(2);
+
+    function _approveCoreMintWeth(address to, uint256 amount) internal{
+        vm.startPrank(to);
+        weth.approve(address(rdpxV2Core),amount);
+        weth.mint(to,amount);
+        vm.stopPrank();
+    }
+    function _setup(uint256 amount) public{
+        vm.deal(user1,amount); vm.label(user1,"user1:");
+        vm.deal(user2,amount); vm.label(user2,"user2:");
+        _approveCoreMintWeth(user1,amount);
+        _approveCoreMintWeth(user2,amount);
+    }
+
+    function test_simpleBond(uint256 amount) public {
+        vm.assume(amount > 0);
+        vm.assume(amount < 100 ether);
+        _setup(amount);
+        rdpxV2Core.bond(amount,0,address(user1));
+        uint256 user1Rdpx = rdpx.balanceOf(address(user1));
+        //console.log("user1Rdpx",user1Rdpx);
+    }
+
+    function test_fallback_rdpxReserveContract() public{
+        vm.startPrank(address(rdpxV2Core));
+        vm.deal(address(rdpxV2Core), 100 ether);
+        vm.expectRevert("EvmError: Revert");
+        address(rdpxReserveContract).call{value: 1 ether}("");
+    }
+
+    function test_vaultLp_deposit() public{
+        vm.startPrank(address(1));
+        weth.mint(address(1),100 ether);
+    }
+
+    // Add n funds to pair token balance of AMO2
+    // 
+    function test_AMO2() public{
+        testV2Amo();
+        weth.mint(address(this), 1000 ether);
+        weth.approve(address(router), type(uint256).max);
+        address[] memory path;
+        path = new address[](2);
+        path[0] = address(address(0x82aF49447D8a07e3bd95BD0d56f35241523fBab1));
+        path[1] = address(pair);
+
+        console.log("pair total supply", pair.totalSupply());
+
+        console.log("address(swapExactTokensForTokens):: ",address(router));
+        uint256 amo2PairBalance1 = pair.balanceOf(address(uniV2LiquidityAMO));
+        vm.deal(address(this),1000 ether);
+
+        router.swapExactETHForTokens{value: 1 ether }(
+          0,
+          path,
+          address(uniV2LiquidityAMO),
+          block.timestamp
+        );
+
+        uint256 amo2PairBalance2 = pair.balanceOf(address(uniV2LiquidityAMO));
+        console.log("amo2PairBalance", amo2PairBalance1, amo2PairBalance2);
+        console.log("clling sync() by periphery deployer of amo v2");
+
+
+        vm.prank(address(4),address(4));
+        uniV2LiquidityAMO.sync();
+        // uniV3LiquidityAMO
+    }
+}

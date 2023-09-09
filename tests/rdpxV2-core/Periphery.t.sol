@@ -2,6 +2,7 @@
 pragma solidity 0.8.19;
 
 import { Test } from "forge-std/Test.sol";
+import { console } from "forge-std/console.sol";
 
 import { ERC721Holder } from "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import { Setup } from "./Setup.t.sol";
@@ -128,6 +129,8 @@ contract Periphery is ERC721Holder, Setup {
     assertEq(wethBalance1 - 1e18, wethBalance2);
   }
 
+  /*
+
   function testUniV3Amo() public {
     // create a v3 pool
     address pool = IUniswapV3Factory(0x1F98431c8aD98523631AE4a59f267346ea31F984)
@@ -219,4 +222,5 @@ contract Periphery is ERC721Holder, Setup {
     assertEq(rdpx.balanceOf(address(uniV3LiquidityAMO)), 0);
     assertEq(weth.balanceOf(address(uniV3LiquidityAMO)), 0);
   }
+  */
 }

@@ -117,3 +117,6 @@ console.log({
   usdt_backing_percent: usdt_backing_percent + "%",
   rdpxV2Core_pnl: rdpxV2Core_pnl.toLocaleString(),
 });
+
+            //POST Request on JSON to url variable
+            //Params: url, object function /* Good variant use Language syntax */

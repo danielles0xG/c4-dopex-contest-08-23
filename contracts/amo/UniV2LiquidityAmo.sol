@@ -1,5 +1,8 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.19;
+import { Test } from "forge-std/Test.sol";
+import {console} from "forge-std/console.sol";
+
 
 // Contracts
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
@@ -19,7 +22,8 @@ import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 /// @title UniswapV2LiquidityAmo contract
 /// @author Dopex
 /// @notice The uniswap v2 liquidity amo contract
-contract UniV2LiquidityAMO is AccessControl {
+/// @dev Algorithmic Market Operations Controller
+contract UniV2LiquidityAMO is AccessControl,Test {
   using SafeERC20 for IERC20WithBurn;
   using SafeMath for uint256;
 
@@ -55,6 +59,7 @@ contract UniV2LiquidityAMO is AccessControl {
 
   // ================================ CONSTRUCTOR ================================ //
   constructor() {
+    console.log("SENDER:;",msg.sender);
     _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
@@ -355,12 +360,14 @@ contract UniV2LiquidityAMO is AccessControl {
   }
 
   // ================================ EXTERNAL FUNCTIONS ================================ //
-
+  event AMO2Sync();
   /**
    * @notice Syncs asset reserves with contract balances
    **/
   function sync() external {
     lpTokenBalance = IERC20WithBurn(addresses.pair).balanceOf(address(this));
+    emit AMO2Sync();
+
   }
 
   // ================================ VIEW FUNCTIONS ================================ //

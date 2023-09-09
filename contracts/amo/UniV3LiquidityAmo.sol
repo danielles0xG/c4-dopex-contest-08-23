@@ -210,6 +210,7 @@ contract UniV3LiquidityAMO is AccessControl, ERC721Holder {
     _sendTokensToRdpxV2Core(params._tokenA, params._tokenB);
   }
 
+  /*
   function removeLiquidity(
     uint256 positionIndex,
     uint256 minAmount0,
@@ -268,7 +269,7 @@ contract UniV3LiquidityAMO is AccessControl, ERC721Holder {
     emit log(positions_array.length);
     emit log(positions_mapping[pos.token_id].token_id);
   }
-
+*/
   // Swap tokenA into tokenB using univ3_router.ExactInputSingle()
   // Uni V3 only
   function swap(

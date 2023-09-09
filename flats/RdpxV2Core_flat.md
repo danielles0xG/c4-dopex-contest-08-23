@@ -1,3 +1,9 @@
+---
+noteId: "9af868c0483d11eea4f8db847f52532e"
+tags: []
+
+---
+
 
 /** 
  *  SourceUnit: /Users/danielguerrero/workspace/BOUNTY/c4-dopex-contest-08-23/contracts/core/RdpxV2Core.sol
